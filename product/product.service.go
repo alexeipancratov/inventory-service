@@ -3,23 +3,16 @@ package product
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/alexeipancratov/inventory-service/cors"
+	"golang.org/x/net/websocket"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"strconv"
 	"strings"
-
-	"github.com/alexeipancratov/inventory-service/cors"
 )
 
 const productsBasePath = "products"
-
-func SetupRoutes(apiBasePath string) {
-	handleProducts := http.HandlerFunc(productsHandler)
-	handleProduct := http.HandlerFunc(productHandler)
-	http.Handle(fmt.Sprintf("%s/%s", apiBasePath, productsBasePath), cors.Middleware(handleProducts))
-	http.Handle(fmt.Sprintf("%s/%s/", apiBasePath, productsBasePath), cors.Middleware(handleProduct))
-}
 
 func productsHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
@@ -131,4 +124,12 @@ func productHandler(w http.ResponseWriter, r *http.Request) {
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
+}
+
+func SetupRoutes(apiBasePath string) {
+	handleProducts := http.HandlerFunc(productsHandler)
+	handleProduct := http.HandlerFunc(productHandler)
+	http.Handle("/websocket", cors.Middleware(websocket.Handler(productSocket)))
+	http.Handle(fmt.Sprintf("%s/%s", apiBasePath, productsBasePath), cors.Middleware(handleProducts))
+	http.Handle(fmt.Sprintf("%s/%s/", apiBasePath, productsBasePath), cors.Middleware(handleProduct))
 }
