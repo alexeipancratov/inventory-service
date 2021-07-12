@@ -3,3 +3,7 @@
 ![box-19795](https://user-images.githubusercontent.com/3188163/124323208-957e0a80-db89-11eb-87aa-fc7a5b331115.png)
 
 A proof of concept web service for managing products written in Go
+
+Key features of working with Golang covered in this project:
+* building REST APIs
+* working with a SQL database (MySQL)
