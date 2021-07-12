@@ -1,6 +1,8 @@
 package main
 
 import (
+	"github.com/alexeipancratov/inventory-service/receipt"
+	"log"
 	"net/http"
 
 	"github.com/alexeipancratov/inventory-service/database"
@@ -12,7 +14,8 @@ const apiBasePath = "/api"
 
 func main() {
 	database.SetupDatabase()
+	receipt.SetupRoutes(apiBasePath)
 	product.SetupRoutes(apiBasePath)
 	// starting the server mux (the default one)
-	http.ListenAndServe(":5000", nil)
+	log.Fatal(http.ListenAndServe(":5000", nil))
 }
