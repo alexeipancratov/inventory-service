@@ -17,5 +17,6 @@ func main() {
 	receipt.SetupRoutes(apiBasePath)
 	product.SetupRoutes(apiBasePath)
 	// starting the server mux (the default one)
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	log.Fatal(http.ListenAndServe(":5000", nil))
 }

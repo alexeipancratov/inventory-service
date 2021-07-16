@@ -14,7 +14,7 @@ import (
 
 const productsBasePath = "products"
 
-func productsHandler(w http.ResponseWriter, r *http.Request) {
+func handleProducts(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		productList, err := getProductList()
@@ -61,7 +61,7 @@ func productsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func productHandler(w http.ResponseWriter, r *http.Request) {
+func handleProduct(w http.ResponseWriter, r *http.Request) {
 	urlPathSegments := strings.Split(r.URL.Path, "products/")
 	productID, err := strconv.Atoi(urlPathSegments[len(urlPathSegments)-1])
 	if err != nil {
@@ -127,9 +127,12 @@ func productHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func SetupRoutes(apiBasePath string) {
-	handleProducts := http.HandlerFunc(productsHandler)
-	handleProduct := http.HandlerFunc(productHandler)
+	productsHandler := http.HandlerFunc(handleProducts)
+	productHandler := http.HandlerFunc(handleProduct)
+	reportHandler := http.HandlerFunc(handleProductReport)
+
 	http.Handle("/websocket", cors.Middleware(websocket.Handler(productSocket)))
-	http.Handle(fmt.Sprintf("%s/%s", apiBasePath, productsBasePath), cors.Middleware(handleProducts))
-	http.Handle(fmt.Sprintf("%s/%s/", apiBasePath, productsBasePath), cors.Middleware(handleProduct))
+	http.Handle(fmt.Sprintf("%s/%s", apiBasePath, productsBasePath), cors.Middleware(productsHandler))
+	http.Handle(fmt.Sprintf("%s/%s/", apiBasePath, productsBasePath), cors.Middleware(productHandler))
+	http.Handle(fmt.Sprintf("%s/%s/reports", apiBasePath, productsBasePath), cors.Middleware(reportHandler))
 }
